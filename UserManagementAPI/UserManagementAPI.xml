@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UserManagementAPI</name>
+    </assembly>
+    <members>
+        <member name="T:UserManagementAPI.Controllers.AuthanticateController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.AuthanticateController.#ctor(Microsoft.AspNetCore.Identity.SignInManager{Microsoft.AspNetCore.Identity.IdentityUser},Microsoft.AspNetCore.Identity.UserManager{Microsoft.AspNetCore.Identity.IdentityUser},UserManagementAPI.Repository.Contracts.ILoggerService,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Authantcate Controllers
+            </summary>
+            <param name="signInManager"></param>
+            <param name="userManager"></param>
+            <param name="logger"></param>
+            <param name="config"></param>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.AuthanticateController.Login(UserManagementAPI.Entities.UsersLoginDTO)">
+            <summary>
+            User Login Endpoint
+            </summary>
+            <param name="userDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UserManagementAPI.Controllers.UserController">
+            <summary>
+            End point used to intract with the User in the  UserManagment's Database
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.#ctor(UserManagementAPI.Repository.Contracts.IUserRepository,UserManagementAPI.Repository.Contracts.ILoggerService,AutoMapper.IMapper,UserManagementAPI.Repository.Contracts.IAudit_logs,UserManagementAPI.Repository.Contracts.IUsersRoleRepository)">
+            <summary>
+            User Constroller Constructor
+            </summary>
+            <param name="UserRepository"></param>
+            <param name="logger"></param>
+            <param name="Mapper"></param>
+            <param name="audit_Logs"></param>
+            /// <param name="UserRoleRepository"></param>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.GetUsers">
+            <summary>
+            Get All Users
+            </summary>
+            <returns>List of Users</returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.GetUser(System.Int32)">
+            <summary>
+            Get An User by id
+            </summary>
+            <param name="id"></param>
+            <returns>User's record</returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.Create(UserManagementAPI.Entities.UsersCreateDTO)">
+            <summary>
+            Create an User
+            </summary>
+            <param name="UserDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.Update(System.Int32,UserManagementAPI.Entities.UsersUpdateDTO)">
+            <summary>
+            Update User details
+            </summary>
+            <param name="id"></param>
+            <param name="UserDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.Delete(System.Int32)">
+            <summary>
+            delete the User by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.CreateUserRole(UserManagementAPI.Entities.AssignUserRole)">
+            <summary>
+            Assign User Role 
+            </summary>
+            <param name="assignUserRole"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.UpdateUserRole(UserManagementAPI.Entities.UpdateAssignUserRole)">
+            <summary>
+            Update User Role 
+            </summary>
+            <param name="updateassignUserRole"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UserManagementAPI.Controllers.UserController.DeleteUserRole(UserManagementAPI.Entities.DeleteAssignUserRole)">
+            <summary>
+            Delete User Role
+            </summary>
+            <param name="deleteassignUserRole"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UserManagementAPI.Mappings.Maps">
+            <summary>
+            Mapping Entities
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Mappings.Maps.#ctor">
+            <summary>
+            Constructor for mapping
+            </summary>
+        </member>
+        <member name="T:UserManagementAPI.Program">
+            <summary>
+            Project API Start
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Program.Main(System.String[])">
+            <summary>
+            Project Main Function
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:UserManagementAPI.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Host Build
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UserManagementAPI.Startup">
+            <summary>
+            Project Start UP
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Project Start UP Constructor
+            </summary>
+        </member>
+        <member name="P:UserManagementAPI.Startup.Configuration">
+            <summary>
+            Configuration
+            </summary>
+        </member>
+        <member name="M:UserManagementAPI.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:UserManagementAPI.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.AspNetCore.Identity.UserManager{Microsoft.AspNetCore.Identity.IdentityUser},Microsoft.AspNetCore.Identity.RoleManager{Microsoft.AspNetCore.Identity.IdentityRole})">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+            <param name="userManager"></param>
+            <param name="roleManager"></param>
+        </member>
+    </members>
+</doc>
