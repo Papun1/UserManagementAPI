@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,6 +12,7 @@ namespace UserManagementAPI.XUnitTest
 {
     public static class DbContextMocker
     {
+    
         public static ApplicationDbContext UserDbContext()
         {
             var configuration = new ConfigurationBuilder()
@@ -35,5 +37,6 @@ namespace UserManagementAPI.XUnitTest
             builder.UseSqlServer(connectionString);
             return new RolesDbContext(builder.Options);
         }
+      
     }
 }

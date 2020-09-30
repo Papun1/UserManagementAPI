@@ -30,7 +30,7 @@
             End point used to intract with the User in the  UserManagment's Database
             </summary>
         </member>
-        <member name="M:UserManagementAPI.Controllers.UserController.#ctor(UserManagementAPI.Repository.Contracts.IUserRepository,UserManagementAPI.Repository.Contracts.ILoggerService,AutoMapper.IMapper,UserManagementAPI.Repository.Contracts.IAudit_logs,UserManagementAPI.Repository.Contracts.IUsersRoleRepository)">
+        <member name="M:UserManagementAPI.Controllers.UserController.#ctor(UserManagementAPI.Repository.Contracts.IUserRepository,UserManagementAPI.Repository.Contracts.ILoggerService,AutoMapper.IMapper,UserManagementAPI.Repository.Contracts.IAudit_logs,UserManagementAPI.Repository.Contracts.IUsersRoleRepository,Microsoft.AspNetCore.Identity.UserManager{Microsoft.AspNetCore.Identity.IdentityUser})">
             <summary>
             User Constroller Constructor
             </summary>

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using UserManagementAPI.Controllers;
@@ -15,6 +17,8 @@ namespace UserManagementAPI.XUnitTest
 {
     public class UsersControllerUnitTest
     {
+       
+
         [Fact]
         public async Task TestGetUsersAsync()
         {
@@ -152,7 +156,7 @@ namespace UserManagementAPI.XUnitTest
                 var controller = new UserRepository(dbContext);
                 var request = new Users
                 {
-                    id = 10,
+                    id = 15,
                     username = "Rohit1",
                     fname = "Rohit",
                     lname = "Swain",
@@ -183,6 +187,8 @@ namespace UserManagementAPI.XUnitTest
         public void TestPostAssignRoleUser()
         {
             string failureResult = "";
+
+        
             try
             {
                 // Arrange
@@ -197,7 +203,7 @@ namespace UserManagementAPI.XUnitTest
                 };
 
                 // Act
-                var response = controller.AssignRoleUser(request);
+                var response = controller.AssignRoleUser(request, null);
                 dbContext.Dispose();
             }
             catch (Exception ex)
@@ -215,6 +221,7 @@ namespace UserManagementAPI.XUnitTest
         public void TestUpdaateUsersRole()
         {
             string failureResult = "";
+            
             try
             {
                 // Arrange
@@ -229,7 +236,7 @@ namespace UserManagementAPI.XUnitTest
                 };
 
                 // Act
-                var response = controller.UpdateAssignRoleUser(request);
+                var response = controller.UpdateAssignRoleUser(request,null );
                 dbContext.Dispose();
             }
             catch (Exception ex)
@@ -262,7 +269,7 @@ namespace UserManagementAPI.XUnitTest
                 };
 
                 // Act
-                var response = controller.DeleteAssignRoleUser(request);
+                var response = controller.DeleteAssignRoleUser(request, null);
                 dbContext.Dispose();
             }
             catch (Exception ex)

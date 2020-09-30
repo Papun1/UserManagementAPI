@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UserManagementAPI.Entities;
 using UserManagementAPI.Repository;
@@ -27,6 +28,7 @@ namespace UserManagementAPI.Controllers
         private readonly IMapper _Mapper;
         private readonly IAudit_logs _audit_Logs;
         private readonly IUsersRoleRepository _UserRoleRepository;
+        private readonly UserManager<IdentityUser> _userManager;
         /// <summary>
         /// User Constroller Constructor
         /// </summary>
@@ -36,13 +38,14 @@ namespace UserManagementAPI.Controllers
         /// <param name="audit_Logs"></param>
         /// /// <param name="UserRoleRepository"></param>
         public UserController(IUserRepository UserRepository, ILoggerService logger,
-           IMapper Mapper, IAudit_logs audit_Logs, IUsersRoleRepository UserRoleRepository)
+           IMapper Mapper, IAudit_logs audit_Logs, IUsersRoleRepository UserRoleRepository, UserManager<IdentityUser> userManager)
         {
             _UserRepository = UserRepository;
             _logger = logger;
             _Mapper = Mapper;
             _audit_Logs = audit_Logs;
             _UserRoleRepository = UserRoleRepository;
+            _userManager = userManager;
         }
         /// <summary>
         /// Get All Users
@@ -107,7 +110,6 @@ namespace UserManagementAPI.Controllers
         /// <param name="UserDTO"></param>
         /// <returns></returns>
         [HttpPost]
-      //  [Authorize]
         [Authorize(Roles ="admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -158,8 +160,7 @@ namespace UserManagementAPI.Controllers
         /// <param name="UserDTO"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [Authorize]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -212,8 +213,7 @@ namespace UserManagementAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-    //    [Authorize]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -262,7 +262,7 @@ namespace UserManagementAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("CreateUserRole")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -282,7 +282,7 @@ namespace UserManagementAPI.Controllers
                     _logger.LogWarn("User data was incomplete");
                     return BadRequest(ModelState);
                 }
-                int UID =  _UserRoleRepository.AssignRoleUser(assignUserRole);
+                int UID =  _UserRoleRepository.AssignRoleUser(assignUserRole,_userManager);
                 var UserAudit = await _UserRepository.FindByUserName(assignUserRole.username.ToString());
                  var User_new = _Mapper.Map<IList<Users>>(UserAudit);
                 _logger.LogInfo("User Role created");
@@ -310,7 +310,7 @@ namespace UserManagementAPI.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("UpdateUserRole")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -330,7 +330,7 @@ namespace UserManagementAPI.Controllers
                     _logger.LogWarn("User data was incomplete");
                     return BadRequest(ModelState);
                 }
-                int UID = _UserRoleRepository.UpdateAssignRoleUser(updateassignUserRole);
+                int UID = _UserRoleRepository.UpdateAssignRoleUser(updateassignUserRole,_userManager);
                 var UserAudit = await _UserRepository.FindByUserName(updateassignUserRole.username.ToString());
                 var User_new = _Mapper.Map<IList<Users>>(UserAudit);
                 _logger.LogInfo("User Role created");
@@ -357,7 +357,7 @@ namespace UserManagementAPI.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("DeleteUserRole")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -377,7 +377,7 @@ namespace UserManagementAPI.Controllers
                     _logger.LogWarn("User data was incomplete");
                     return BadRequest(ModelState);
                 }
-                int UID = _UserRoleRepository.DeleteAssignRoleUser(deleteassignUserRole);
+                int UID = _UserRoleRepository.DeleteAssignRoleUser(deleteassignUserRole,_userManager);
                 var UserAudit = await _UserRepository.FindByUserName(deleteassignUserRole.username.ToString());
                 var User_new = _Mapper.Map<IList<Users>>(UserAudit);
                 _logger.LogInfo("Role has deleted");

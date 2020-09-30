@@ -16,22 +16,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace UserManagementAPI.Repository
 {
-    public class UsersRoleRepository:IUsersRoleRepository
+    public class UsersRoleRepository : IUsersRoleRepository
     {
         private readonly ApplicationDbContext _db;
         private readonly RolesDbContext _dbRole;
 
-        public UsersRoleRepository(ApplicationDbContext db,RolesDbContext dbRole)
+        public UsersRoleRepository(ApplicationDbContext db, RolesDbContext dbRole)
         {
             _db = db;
             _dbRole = dbRole;
         }
-       
-           
-            public int AssignRoleUser(AssignUserRole assignUserRole)
+
+
+        public int AssignRoleUser(AssignUserRole assignUserRole, UserManager<IdentityUser> userManager)
         {
-           
-                var param = new SqlParameter[] {
+
+            var param = new SqlParameter[] {
                         new SqlParameter() {
                             ParameterName = "@username",
                             SqlDbType =  System.Data.SqlDbType.VarChar,
@@ -57,14 +57,18 @@ namespace UserManagementAPI.Repository
             //    IQueryable<Users> studentList = _dbRole.User_new.FromSqlRaw("EXEC ProcAddRoletoUser @username, @rolename, @IsDelete", param[0].Value, param[1].Value, param[2].Value).IgnoreQueryFilters();
             string SQLQuery = $"EXECUTE ProcAddRoletoUser @username='{param[0].Value}', @rolename='{param[1].Value}', @IsInsert={param[2].Value}";
 
-            int Uid=_dbRole.Database.ExecuteSqlRaw(SQLQuery);
+            int Uid = _dbRole.Database.ExecuteSqlRaw(SQLQuery);
+            if(userManager !=null)
+            {
+                SeedCreateUsers(userManager, assignUserRole).Wait();
+            }
 
-           
+            
             //_dbRole.User_new.ExecuteSqlCommand("EXEC ProcAddRoletoUser @username, @rolename, @IsDelete", username.Value, rolename.Value, IsInsert.Value);
             return Uid;
         }
 
-        public int DeleteAssignRoleUser(DeleteAssignUserRole deleteassignUserRole)
+        public int DeleteAssignRoleUser(DeleteAssignUserRole deleteassignUserRole, UserManager<IdentityUser> userManager)
         {
             var param = new SqlParameter[] {
                         new SqlParameter() {
@@ -92,10 +96,14 @@ namespace UserManagementAPI.Repository
             string SQLQuery = $"EXECUTE ProcAddRoletoUser @username='{param[0].Value}', @rolename='{param[1].Value}', @IsDelete={param[2].Value}";
 
             int result = _dbRole.Database.ExecuteSqlRaw(SQLQuery);
+            if (userManager != null)
+            {
+                DeleteSeedUsers(userManager, deleteassignUserRole).Wait();
+            }
             return result;
         }
 
-        public int UpdateAssignRoleUser(UpdateAssignUserRole updateassignUserRole)
+        public int UpdateAssignRoleUser(UpdateAssignUserRole updateassignUserRole, UserManager<IdentityUser> userManager)
         {
             var param = new SqlParameter[] {
                         new SqlParameter() {
@@ -123,6 +131,10 @@ namespace UserManagementAPI.Repository
             string SQLQuery = $"EXECUTE ProcAddRoletoUser @username='{param[0].Value}', @rolename='{param[1].Value}', @IsEdit={param[2].Value}";
 
             int v = _dbRole.Database.ExecuteSqlRaw(SQLQuery);
+            if (userManager != null)
+            {
+                UpdateSeedUsers(userManager, updateassignUserRole).Wait();
+            }
             return v;
         }
         public async Task<IList<Users>> FindByUserName(string Username)
@@ -130,9 +142,9 @@ namespace UserManagementAPI.Repository
             var Users = await _db.Users.Where(x => x.username == Username).ToListAsync();
             return Users;
         }
-        private async Task SeedCreateUsers(UserManager<IdentityUser> userManager,AssignUserRole assignUsername)
+        private async Task SeedCreateUsers(UserManager<IdentityUser> userManager, AssignUserRole assignUsername)
         {
-            
+
             IList<Users> Users = await FindByUserName(assignUsername.username);
 
             if (await userManager.FindByNameAsync(assignUsername.username) == null)
@@ -148,7 +160,7 @@ namespace UserManagementAPI.Repository
                     await userManager.AddToRoleAsync(user, assignUsername.rolename);
                 }
             }
-           
+
         }
         private async static Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
@@ -169,20 +181,46 @@ namespace UserManagementAPI.Repository
                 await roleManager.CreateAsync(role);
             }
         }
-        private async static Task UpdateSeedUsers(UserManager<IdentityUser> userManager, UpdateAssignUserRole updateassignUsername)
+        private async Task UpdateSeedUsers(UserManager<IdentityUser> userManager, UpdateAssignUserRole updateassignUsername)
         {
+            IList<Users> Users = await FindByUserName(updateassignUsername.username);
 
-            if (await userManager.FindByNameAsync(updateassignUsername.username) == null)
+            if (await userManager.FindByNameAsync(updateassignUsername.username) != null)
             {
                 var user = new IdentityUser
                 {
                     UserName = updateassignUsername.username,
-                    Email = "papunsahoo2012@gmail.com"
+                    Email = Users[0].Email,
+ 
                 };
-                var result = await userManager.CreateAsync(user, "Password1@");
-                if (result.Succeeded)
+                var result = await userManager.FindByNameAsync(updateassignUsername.username);
+                if (result != null)
                 {
-                    await userManager.AddToRoleAsync(user, updateassignUsername.rolename);
+                    IdentityResult deletionResult = await userManager.RemoveFromRoleAsync(result, updateassignUsername.rolename);
+                    if (deletionResult != null)
+                    {
+                        await userManager.AddToRoleAsync(user, updateassignUsername.rolename);
+                    }
+                }
+            }
+
+        }
+
+        private async Task DeleteSeedUsers(UserManager<IdentityUser> userManager, DeleteAssignUserRole deleteassignUsername)
+        {
+            IList<Users> Users = await FindByUserName(deleteassignUsername.username);
+
+            if (await userManager.FindByNameAsync(deleteassignUsername.username) != null)
+            {
+                var user = new IdentityUser
+                {
+                    UserName = deleteassignUsername.username,
+                    Email = Users[0].Email
+                };
+                var result = await userManager.FindByNameAsync(deleteassignUsername.username);
+                if (result != null)
+                {
+                    IdentityResult deletionResult = await userManager.RemoveFromRoleAsync(result, deleteassignUsername.rolename);
                 }
             }
 
