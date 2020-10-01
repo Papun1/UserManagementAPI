@@ -146,7 +146,7 @@ namespace UserManagementAPI.Repository
         {
 
             IList<Users> Users = await FindByUserName(assignUsername.username);
-
+           
             if (await userManager.FindByNameAsync(assignUsername.username) == null)
             {
                 var user = new IdentityUser
@@ -160,6 +160,7 @@ namespace UserManagementAPI.Repository
                     await userManager.AddToRoleAsync(user, assignUsername.rolename);
                 }
             }
+            
 
         }
         private async static Task SeedRoles(RoleManager<IdentityRole> roleManager)
@@ -196,10 +197,10 @@ namespace UserManagementAPI.Repository
                 var result = await userManager.FindByNameAsync(updateassignUsername.username);
                 if (result != null)
                 {
-                    IdentityResult deletionResult = await userManager.RemoveFromRoleAsync(result, updateassignUsername.rolename);
+                    IdentityResult deletionResult = await userManager.RemoveFromRolesAsync(result, await userManager.GetRolesAsync(result));
                     if (deletionResult != null)
                     {
-                        await userManager.AddToRoleAsync(user, updateassignUsername.rolename);
+                        await userManager.AddToRoleAsync(result, updateassignUsername.rolename);
                     }
                 }
             }
@@ -221,6 +222,8 @@ namespace UserManagementAPI.Repository
                 if (result != null)
                 {
                     IdentityResult deletionResult = await userManager.RemoveFromRoleAsync(result, deleteassignUsername.rolename);
+                    IdentityResult deletionUser = await userManager.DeleteAsync(result);
+
                 }
             }
 
